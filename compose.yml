@@ -1,0 +1,23 @@
+services:
+  mediamtx:
+    build: .  # Собираем из Dockerfile в текущей директории
+    container_name: mediamtx
+    
+    restart: unless-stopped
+
+    network_mode: host
+    
+    volumes:
+      # Монтируем конфигурационный файл (рекомендуется, чтобы не пересобирать образ)
+      - ./mediamtx.yml:/app/mediamtx.yml:ro
+      
+      # Монтируем папку для записей (если планируете запись)
+      - ./recordings:/recordings
+      
+      # Синхронизация времени с хостом
+      - /etc/localtime:/etc/localtime:ro
+
+      - /etc/letsencrypt/live/displayify.ru/fullchain.pem:/etc/letsencrypt/live/displayify.ru/fullchain.pem
+
+      - /etc/letsencrypt/live/displayify.ru/privkey.pem:/etc/letsencrypt/live/displayify.ru/privkey.pem
+
