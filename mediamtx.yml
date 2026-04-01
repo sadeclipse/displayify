@@ -798,19 +798,35 @@ pathDefaults:
 # for example "~^(test1|test2)$" will match both "test1" and "test2",
 # for example "~^prefix" will match all paths that start with "prefix".
 paths:
-  live/999:
+  live/eclipse:
     source: publisher
-    runOnReady: ffmpeg -re -fflags +genpts+igndts -rtsp_flags prefer_tcp -buffer_size 8192k -i rtsp://localhost:8554/live/999 -c:v copy -c:a libopus -b:a 256k -ar 48000 -ac 2 -application lowdelay -frame_duration 20 -packet_loss 10 -f rtsp -rtsp_transport tcp -muxdelay 0.1 -muxpreload 0 rtsp://localhost:8554/live/opus
+    runOnReady: ffmpeg -re -fflags +genpts+igndts -rtsp_flags prefer_tcp -buffer_size 8192k -i rtsp://localhost:8554/live/eclipse -c:v copy -c:a libopus -b:a 256k -ar 48000 -ac 2 -application lowdelay -frame_duration 20 -packet_loss 10 -f rtsp -rtsp_transport tcp -muxdelay 0.1 -muxpreload 0 rtsp://localhost:8554/live/eclipse_stream
     runOnReadyRestart: true
-    runOnNotReady: pkill -f "ffmpeg.*rtsp://localhost:8554/live/999"
+    runOnNotReady: pkill -f "ffmpeg.*rtsp://localhost:8554/live/eclipse"
 
+  # incept1on
+  live/incept1on:
+    source: publisher
+    runOnReady: ffmpeg -re -fflags +genpts+igndts -rtsp_flags prefer_tcp -buffer_size 8192k -i rtsp://localhost:8554/live/incept1on -c:v copy -c:a libopus -b:a 256k -ar 48000 -ac 2 -application lowdelay -frame_duration 20 -packet_loss 10 -f rtsp -rtsp_transport tcp -muxdelay 0.1 -muxpreload 0 rtsp://localhost:8554/live/incept1on_stream
+    runOnReadyRestart: true
+    runOnNotReady: pkill -f "ffmpeg.*rtsp://localhost:8554/live/incept1on"
 
-  live/opus:
+  # viox
+  live/viox:
+    source: publisher
+    runOnReady: ffmpeg -re -fflags +genpts+igndts -rtsp_flags prefer_tcp -buffer_size 8192k -i rtsp://localhost:8554/live/viox -c:v copy -c:a libopus -b:a 256k -ar 48000 -ac 2 -application lowdelay -frame_duration 20 -packet_loss 10 -f rtsp -rtsp_transport tcp -muxdelay 0.1 -muxpreload 0 rtsp://localhost:8554/live/viox_stream
+    runOnReadyRestart: true
+    runOnNotReady: pkill -f "ffmpeg.*rtsp://localhost:8554/live/viox"
+
+  # Результирующие потоки с opus
+  live/eclipse_stream:
     source: publisher
 
-  live/stream:
-    source: redirect
-    sourceRedirect: /live/opus
+  live/incept1on_stream:
+    source: publisher
+
+  live/viox_stream:
+    source: publisher
   # example:
   # my_camera:
   #   source: rtsp://my_camera
