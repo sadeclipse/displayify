@@ -1,31 +1,22 @@
 import React, { useState } from 'react';
-import StreamPlayer from './components/StreamPlayer';
-import StreamButtons from './components/StreamButtons';
 import './App.css';
 
 function App() {
-  const [activeStream, setActiveStream] = useState(null);
+  const [activeStream, setActiveStream] = useState('incept1on');
 
   const streams = {
     eclipse: {
       name: 'Eclipse Stream',
-      url: 'https://displayify.ru:8889/live/eclipse_stream',
-      type: 'webrtc'
+      url: 'https://displayify.ru:8889/live/eclipse_stream'
     },
     incept1on: {
       name: 'Incept1on Stream',
-      url: 'https://displayify.ru:8889/live/incept1on_stream',
-      type: 'webrtc'
+      url: 'https://displayify.ru:8889/live/incept1on_stream'
     },
     viox: {
       name: 'Viox Stream',
-      url: 'https://displayify.ru:8889/live/viox_stream',
-      type: 'webrtc'
+      url: 'https://displayify.ru:8889/live/viox_stream'
     }
-  };
-
-  const handleStreamSelect = (streamKey) => {
-    setActiveStream(streams[streamKey]);
   };
 
   return (
@@ -34,22 +25,26 @@ function App() {
         <h1>Displayify - Video Streaming</h1>
       </header>
       
-      <StreamButtons 
-        streams={streams} 
-        onSelectStream={handleStreamSelect}
-        activeStreamKey={activeStream ? Object.keys(streams).find(key => streams[key] === activeStream) : null}
-      />
+      <div className="buttons-container">
+        {Object.entries(streams).map(([key, stream]) => (
+          <button
+            key={key}
+            className={`stream-button ${activeStream === key ? 'active' : ''}`}
+            onClick={() => setActiveStream(key)}
+          >
+            {stream.name}
+          </button>
+        ))}
+      </div>
       
-      {activeStream && (
-        <div className="stream-container">
-          <h2>{activeStream.name}</h2>
-          <StreamPlayer 
-            streamUrl={activeStream.url} 
-            streamType={activeStream.type}
-            streamName={activeStream.name}
-          />
-        </div>
-      )}
+      <div className="iframe-container">
+        <iframe
+          src={streams[activeStream].url}
+          title={streams[activeStream].name}
+          className="stream-iframe"
+          allow="camera; microphone; display-capture; autoplay"
+        />
+      </div>
     </div>
   );
 }
