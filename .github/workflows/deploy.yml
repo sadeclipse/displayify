@@ -40,7 +40,12 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: ${{ secrets.REMOTE_PORT }}
         script: |
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
           cd /home/${{ secrets.REMOTE_USER }}
+
+          NPM_PATH="/home/${{ secrets.REMOTE_USER }}/.nvm/versions/node/v24.15.0/bin/npm"
           
           docker compose build --no-cache
           docker compose down
