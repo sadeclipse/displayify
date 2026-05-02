@@ -41,7 +41,6 @@ jobs:
         port: ${{ secrets.REMOTE_PORT }}
         script: |
           cd /home/${{ secrets.REMOTE_USER }}
-          rm -rf *
           
           docker compose build --no-cache
           docker compose down
