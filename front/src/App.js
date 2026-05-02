@@ -8,7 +8,7 @@ function App() {
 
   const streams = {
     eclipse: {
-      name: 'Eclipse Stream',
+      name: 'eclipse Stream',
       url: 'https://displayify.ru:8889/live/eclipse_stream'
     },
     incept1on: {
