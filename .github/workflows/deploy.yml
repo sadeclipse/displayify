@@ -21,12 +21,6 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
         chmod 600 ~/.ssh/deploy_key
     
-    - name: Rsync to remote server
-      run: |
-        rsync -avz -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.REMOTE_PORT }}" \
-          --delete \
-          ./ ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/${{ secrets.REMOTE_USER }}
-    
     - name: Execute deployment
       uses: appleboy/ssh-action@v1.0.0
       with:
