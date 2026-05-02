@@ -1,0 +1,60 @@
+name: Deploy to Remote Server
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Copy files to remote server using SCP
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: ${{ secrets.REMOTE_HOST }}
+        username: ${{ secrets.REMOTE_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.REMOTE_PORT }}
+        source: "."
+        target: "/home/${{ secrets.REMOTE_USER }}"
+        strip_components: 0  # Preserves directory structure
+    
+    - name: Setup SSH key
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+        chmod 600 ~/.ssh/deploy_key
+    
+    - name: Execute deployment
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.REMOTE_HOST }}
+        username: ${{ secrets.REMOTE_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.REMOTE_PORT }}
+        script: |
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+          cd /home/${{ secrets.REMOTE_USER }}
+
+          NPM_PATH="/home/${{ secrets.REMOTE_USER }}/.nvm/versions/node/v24.15.0/bin/npm"
+          
+          docker compose build --no-cache
+          docker compose down
+          docker compose up -d
+          
+          cd front
+          npm install
+          npm run build
+          cd build
+          
+          sudo rm -rf /var/www/html/*
+          sudo cp -r * /var/www/html/
