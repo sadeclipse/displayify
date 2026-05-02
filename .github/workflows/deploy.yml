@@ -20,13 +20,12 @@ jobs:
         mkdir -p ~/.ssh
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
         chmod 600 ~/.ssh/deploy_key
-        echo "${{ secrets.REMOTE_HOST }} ssh-rsa AAAAB3..." >> ~/.ssh/known_hosts  # Optional: add host key
     
     - name: Rsync to remote server
       run: |
         rsync -avz -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.REMOTE_PORT }}" \
           --delete \
-          ./ ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/path/to/your/temp/folder/
+          ./ ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/${{ secrets.REMOTE_USER }}
     
     - name: Execute deployment
       uses: appleboy/ssh-action@v1.0.0
@@ -36,7 +35,7 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: ${{ secrets.REMOTE_PORT }}
         script: |
-          cd /home/secrets.REMOTE_USER
+          cd /home/${{ secrets.REMOTE_USER }}
           
           rm -rf displayify/
           git clone git@github.com:Incept10n/displayify.git
